@@ -32,7 +32,7 @@ def test_can_lock():
     # once locked approved address cannot initiate transfer as well
     test_token.approve(account2, mint_amount / 10, {"from": account})
     with pytest.raises(exceptions.VirtualMachineError):
-        test_token.transferFrom(account, account2, mint_amount / 10)
+        test_token.transferFrom(account, account2, mint_amount / 10, {"from": account2})
 
 
 def test_can_unlock():
