@@ -14,18 +14,24 @@ contract Lockable {
         tokenContract = IERC20(_tokenAddress);
     }
 
-    function lockToken(address _controller) public {
+    function lockToken(address _controller, bool _proxy) public {
+        address tokenOwner;
+        if (_proxy) {
+            tokenOwner = tx.origin;
+        } else {
+            tokenOwner = msg.sender;
+        }
         require(
-            addressTokenLocked[msg.sender] != true,
+            addressTokenLocked[tokenOwner] != true,
             "Token is already locked!"
         );
         require(
-            tokenContract.balanceOf(msg.sender) > 0,
+            tokenContract.balanceOf(tokenOwner) > 0,
             "You must own token(s) in order to lock!"
         );
         require(_controller != address(0), "Controller address must not be 0!");
-        addressTokenLocked[msg.sender] = true;
-        addressTokenController[msg.sender] = _controller;
+        addressTokenLocked[tokenOwner] = true;
+        addressTokenController[tokenOwner] = _controller;
     }
 
     function unlockToken(address _tokenOwner) public {

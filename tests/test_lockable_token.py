@@ -20,12 +20,12 @@ def test_can_lock():
     account2 = get_account(name="DEV02")
     mint_amount = 1000000
     test_token.mint(mint_amount, {"from": account})
-    test_token.lockToken(account2, {"from": account})
+    test_token.lockToken(account2, False, {"from": account})
     assert test_token.addressTokenLocked(account) == True
     assert test_token.addressTokenController(account) == account2
     # non token holders cannot lock
     with pytest.raises(exceptions.VirtualMachineError):
-        test_token.lockToken(account2, {"from": account2})
+        test_token.lockToken(account2, False, {"from": account2})
     # once locked transfer cannot be initiated from owner
     with pytest.raises(exceptions.VirtualMachineError):
         test_token.transfer(account2, mint_amount / 10, {"from": account})
@@ -40,7 +40,7 @@ def test_can_unlock():
     account2 = get_account(name="DEV02")
     mint_amount = 1000000
     test_token.mint(mint_amount, {"from": account})
-    test_token.lockToken(account2, {"from": account})
+    test_token.lockToken(account2, False, {"from": account})
     # once locked non controller cannot initiate unlock
     with pytest.raises(exceptions.VirtualMachineError):
         test_token.unlockToken(account, {"from": account})
